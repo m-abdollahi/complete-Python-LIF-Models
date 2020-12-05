@@ -207,47 +207,31 @@ ylabel('v');
 
 """> > > ># ***Exponential Exponential Leaky Integrate-and-Fire (ELIF) Model***
 
-# 1 ) Exponential Model ( without threshold or reset and Start Point)
+# 1 ) Exponential Model ( with threshold or reset and Start Point)
 
 *   Importing Libraries and Modules
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
-import math as mt
-
 pip install brian2
+pip install neurodynex
 
-from brian2 import *
+import brian2 as b2
+import matplotlib.pyplot as plt
+import numpy as np
+from neurodynex.leaky_integrate_and_fire import LIF
+from neurodynex.tools import input_factory, plot_tools
 
 """
 *   Set the Neuron
 """
 
-v_rest = -65 * mV        # Rest Potential 
-RI = 90 * mV             # RI = I * R = membrane resistance x constant input current = I/G
-tau = 10*ms              # Tau = Memberane time Constant 
-vth = 20*mV              # thershold Potential
-deltath = 2*mV           # Tereshold reach
+V_REST = -70*b2.mV                           # Reset Potential  
+V_RESET = -60*b2.mV                          # Reset Potential
+FIRING_THRESHOLD = -50*b2.mV                 # Treshold Potential
+MEMBRANE_RESISTANCE = 10. * b2.Mohm          # Membereane R 
+MEMBRANE_TIME_SCALE = 8. * b2.ms             # Time Constant
+ABSOLUTE_REFRACTORY_PERIOD = 2.0 * b2.ms     # Refactory time
+LIF.getting_started()
+LIF.print_default_parameters()
 
-"""
-*   Set the LIF differential equations
-"""
 
-eqs = '''
-dv/dt = (v_rest - v + RI  + (deltath * mt.exp((v - 20*mV)/deltath)))/tau : volt
-'''
-
-"""
-*   Set the Neuron Circuit
-"""
-
-Methods = 'euler'        # set the method for the equations ( exact or euler)
-Run_Time0 = 100*ms      # Import the Run time for Record
-
-G = NeuronGroup(1, eqs, method=Methods)
-M = StateMonitor(G, 'v', record=0)
-run(Run_Time0)
-plot(M.t/ms, M.v[0])
-xlabel('Time (ms)')
-ylabel('v');
